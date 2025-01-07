@@ -16,6 +16,7 @@ def estimate_grappa_kernel(acs,
                            cuda_mode="estimation",
                            isGolfSparks=False,
                            quiet=False,
+                           dtype=torch.complex64,
 ) -> GRAPPAReconSpec:
 
     if len(af) == 1:
@@ -24,6 +25,8 @@ def estimate_grappa_kernel(acs,
     if len(acs.shape) == 3:
         acs = acs[:, :, None, :]
 
+    acs = acs.to(dtype)
+    
     nc, acsny, acsnz, acsnx = acs.shape
 
     logger.debug("GRAPPA Kernel size: ", kernel_size)

@@ -63,7 +63,7 @@ def GRAPPA_Recon(
     isGolfSparks : bool, optional
         Whether the input data is from the GoLF-SPARKLING sequence. Default: `False`.
     """
-    if not grappa_recon_spec:
+    if grappa_recon_spec is None:
         grappa_recon_spec = estimate_grappa_kernel(acs,
                                                    af=af,
                                                    kernel_size=kernel_size,

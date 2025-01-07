@@ -19,7 +19,8 @@ def apply_grappa_kernel(sig,
                         cuda: bool = False,
                         cuda_mode: str = "all",
                         return_kernel: bool = False,
-                        quiet: bool = False
+                        quiet: bool = False,
+                        dtype=torch.complex64,
 ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
 
     grappa_kernel = grappa_recon_spec.weights.cuda() if cuda and cuda_mode in ["all", "application"] else grappa_recon_spec.weights
@@ -30,6 +31,8 @@ def apply_grappa_kernel(sig,
     delta = grappa_recon_spec.delta
     idxs_src = grappa_recon_spec.idxs_src
 
+    sig = sig.to(dtype)
+    
     nc, *vol_shape = sig.shape
 
     if mask is not None:
@@ -135,4 +138,4 @@ def apply_grappa_kernel(sig,
     if not quiet:
         logger.info("GRAPPA Reconstruction done.")
 
-    return rec, grappa_kernel if return_kernel else rec
+    return rec, grappa_recon_spec

@@ -22,10 +22,11 @@ def estimate_grappa_kernel(acs,
     if len(af) == 1:
         af = [af[0], 1]
 
-    if len(acs.shape) == 3:
-        acs = acs[:, :, None, :]
+    if isGolfSparks:
+        if len(acs.shape) == 3:
+            acs = acs[:, :, None, :]
 
-    acs = acs.to(dtype)
+        acs = acs.to(dtype)
     
     nc, acsny, acsnz, acsnx = acs.shape
 

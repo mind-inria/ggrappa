@@ -6,6 +6,7 @@ from typing import Union
 from . import GRAPPAReconSpec
 from .estimation import estimate_grappa_kernel
 from .application import apply_grappa_kernel
+from .utils import extract_sampled_regions
 
 
 logger = logging.getLogger(__name__)
@@ -63,6 +64,8 @@ def GRAPPA_Recon(
     isGolfSparks : bool, optional
         Whether the input data is from the GoLF-SPARKLING sequence. Default: `False`.
     """
+    if acs is None:
+        acs = extract_sampled_regions(sig, acs_only=True)
     if grappa_recon_spec is None:
         grappa_recon_spec = estimate_grappa_kernel(acs,
                                                    af=af,

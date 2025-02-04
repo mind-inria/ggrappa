@@ -21,7 +21,7 @@ def estimate_grappa_kernel(acs,
 
     if len(af) == 1:
         af = [af[0], 1]
-
+        
     if len(acs.shape) == 3:
         acs = acs[:, :, None, :]
     acs = acs.to(dtype)
@@ -31,14 +31,14 @@ def estimate_grappa_kernel(acs,
     logger.debug("lambda: ", lambda_)
 
     if kernel_size:
-        pat = torch.zeros([((k-1) * af[i]*[1, (1 if delta == 0 else af[1]//delta)][i==0] + 1) for i, k in enumerate(kernel_size[:2])])
-
+        pat = torch.zeros([((k-1) * af[i]*[1,1][i==0] + 1) for i, k in enumerate(kernel_size[:2])])
+    
     cnt=0
     for y in range(0, pat.shape[0], af[0]):
         pat[y,cnt::af[1]] = 1
         cnt = (cnt+delta)%af[1]
 
-    tbly = af[0] * (1 if delta == 0 else af[1]//delta)
+    tbly = af[0]
     tblz = af[1]
     tblx = 1
 

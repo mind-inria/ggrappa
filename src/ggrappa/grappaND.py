@@ -25,6 +25,7 @@ def GRAPPA_Recon(
         isGolfSparks=False,
         cuda: bool = True,
         cuda_mode: str = "all",
+        intACS=False,
         return_kernel: bool = False,
         quiet=False,
 
@@ -85,4 +86,5 @@ def GRAPPA_Recon(
                                mask=mask,
                                isGolfSparks=isGolfSparks,
                                return_kernel=return_kernel,
-                               quiet=quiet)
+                               quiet=quiet,
+                               intACS=intACS)

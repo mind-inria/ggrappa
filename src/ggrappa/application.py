@@ -21,6 +21,7 @@ def apply_grappa_kernel(sig,
                         cuda: bool = False,
                         cuda_mode: str = "all",
                         return_kernel: bool = False,
+                        intACS=False,
                         quiet: bool = False,
                         dtype=torch.complex64,
 ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
@@ -47,7 +48,7 @@ def apply_grappa_kernel(sig,
     shift_y, shift_z = 0, 0
     if isGolfSparks:
         sig, start_loc, end_loc = extract_sampled_regions(sig, acs_only=False)
-        if delta != 0:
+        if not intACS:
             # Measure the shift by checking the pattern at the center of k-space
             # FIXME: we currently dont support InACS with CAIPI, which would fail
             sig_sampled_pat = sig.abs().sum(0).sum(-1)!=0

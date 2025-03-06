@@ -77,9 +77,9 @@ def apply_grappa_kernel(sig,
             shift_y, shift_z = shifts
     else:
         shift_y, shift_z = abs(sig).sum(0).sum(-1).nonzero()[0]
-        sig = torch.nn.functional.pad(sig,  (xpos, (sblx-xpos-tblx),
-                                            (af[1] - zpos)%tblz + zpos, (sblz-zpos-tblz),
-                                            (af[0] * (1 if delta == 0 else af[1]//delta) - ypos)%tbly + ypos, (sbly-ypos-tbly)))
+        #sig = torch.nn.functional.pad(sig,  (xpos, (sblx-xpos-tblx),
+        #                                    (af[1] - zpos)%tblz + zpos, (sblz-zpos-tblz),
+        #                                    (af[0] - ypos)%tbly + ypos, (sbly-ypos-tbly)))
 
     rec = torch.zeros_like(sig)
 

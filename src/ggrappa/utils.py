@@ -59,7 +59,7 @@ def get_src_tgs_blocks(blocks, idxs_src, idxs_tgs, check_type='acs'):
     return select_blocks[..., idxs_src], select_blocks[..., idxs_tgs]
 
 def get_grappa_filled_data_and_loc(sig, rec, params):
-    rec[:, np.abs(sig).sum(axis=0)!=0] = 0
+    #rec[:, np.abs(sig).sum(axis=0)!=0] = 0
     sampled_mask = np.abs(rec).sum(axis=0) != 0
     extra_data = rec[:, sampled_mask]
     rec_loc = np.nonzero(sampled_mask)
@@ -99,7 +99,8 @@ def get_cart_portion_sparkling(kspace_shots, traj_params, kspace_data, calc_osf_
     locs = np.ones((grads.shape[0], 2))*-1
     sampled_loc = [[],] * grads.shape[0]
     cart_loc = [[],] * grads.shape[0]
-
+    new_kspace_data = []
+    new_kspace_loc = []
     gridded_data = np.zeros((kspace_data.shape[0], *traj_params['img_size']), dtype=np.complex64)
     for start, end in zip(starts, ends):
         row, start_col = start
@@ -116,6 +117,8 @@ def get_cart_portion_sparkling(kspace_shots, traj_params, kspace_data, calc_osf_
                 (s_loc[1]-s_loc[0])*
                 np.diff(kspace_shots[row, s_loc[0]:s_loc[0]+2, 0])*traj_params['img_size'][0]
             ) == 0:
+            new_kspace_data.append(re_kspace_data[:, row])
+            new_kspace_loc.append(kspace_shots[row, ...])
             continue
         data = sp.signal.resample(
             re_kspace_data[:, row, s_loc[0]: s_loc[1]],
@@ -125,11 +128,19 @@ def get_cart_portion_sparkling(kspace_shots, traj_params, kspace_data, calc_osf_
             ),
             axis=-1,
         )
+        new_kspace_data.append(np.hstack([
+            re_kspace_data[:, row, :s_loc[0]],
+            re_kspace_data[:, row, s_loc[1]:]
+        ]))
+        new_kspace_loc.append(np.concatenate([
+            kspace_shots[row, :s_loc[0]],
+            kspace_shots[row, s_loc[1]:],
+        ], axis=0))
         locs += 0.5
         locs *= np.asarray(traj_params["img_size"]).T
         rounded_locs = locs.round(0).astype('int')
         gridded_data[:, rounded_locs[0][0]:rounded_locs[0][0]+len(data[0]), rounded_locs[0][1], rounded_locs[0][2]] = data
-    return gridded_data
+    return gridded_data, np.hstack(new_kspace_data), np.concatenate(new_kspace_loc, axis=0)
     
 def pad_back_to_size(sig, vol_shape, start_loc, end_loc):
     """Pads a given signal tensor back to a specified volume shape.

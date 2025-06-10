@@ -95,7 +95,7 @@ def apply_grappa_kernel(sig,
     for y in tqdm(y_ival, disable=quiet):
         sig_y = sig[:,y:y+size_chunk_y]
         sig_y = sig_y.cuda() if cuda and cuda_mode in ["all", "application"] else sig_y
-        zival = cnt + z_ival
+        zival = z_ival[torch.tensor(z_ival) >= cnt]
         for z in zival:
             blocks = sig_y[:,:, z:z+sblz, :].unfold(dimension=1, size=sbly, step=tbly).unfold(dimension=3, size=sblx, step=tblx)
             blocks = blocks.permute(1,3,0,4,2,5)

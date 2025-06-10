@@ -84,8 +84,8 @@ def apply_grappa_kernel(sig,
     rec = torch.zeros_like(sig)
 
     size_chunk_y = sbly + tbly*(batch_size - 1)
-    y_ival = range(shift_y, max(rec.shape[1] - sbly, 1), tbly*batch_size)
-    z_ival = np.arange(0, max(rec.shape[2] - sblz, 1), tblz)
+    y_ival = range(shift_y, max(rec.shape[1] - sbly - 1, 1), tbly*batch_size)
+    z_ival = np.arange(0, max(rec.shape[2] - sblz - 1, 1), tblz)
     
     if not quiet:
         logger.info("GRAPPA Reconstruction...")

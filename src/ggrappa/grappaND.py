@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 def GRAPPA_Recon(
         sig: torch.Tensor,
         acs: torch.Tensor,
-        af: Union[list[int], tuple[int, ...]],
+        af: Union[list[int], tuple[int, ...]] = None,
         delta: int = 0,
         kernel_size: Union[list[int], tuple[int, ...]] = (4,4,5),
         lambda_: float = 1e-4,

@@ -47,34 +47,20 @@ def apply_grappa_kernel(sig,
     shift_y, shift_z = 0, 0
     if isGolfSparks:
         sig, start_loc, end_loc = extract_sampled_regions(sig, acs_only=False)
-        if delta != 0:
-            # Measure the shift by checking the pattern at the center of k-space
-            # FIXME: we currently dont support InACS with CAIPI, which would fail
-            sig_sampled_pat = sig.abs().sum(0).sum(-1)!=0
-            kernel_pat = idxs_src[..., 0]
-            y_multi = sig_sampled_pat.shape[0] // tbly // 2
-            z_multi = sig_sampled_pat.shape[1] // tblz // 2
-            cnt = 0 
-            for shift_y in range(af[0]):
-                for shift_z in range(af[1]):
-                    if torch.all(sig_sampled_pat[y_multi*tbly+shift_y:y_multi*tbly+shift_y+sbly, z_multi*tblz+shift_z+cnt:z_multi*tblz+shift_z+sblz+cnt] == kernel_pat):
-                        break
-                cnt = (cnt+delta)%af[1]
-            if not torch.all(sig_sampled_pat[y_multi*tbly+shift_y:y_multi*tbly+shift_y+sbly, z_multi*tblz+shift_z+cnt:z_multi*tblz+shift_z+sblz+cnt] == kernel_pat):
-                warnings.warn("Could not find the kernel pattern in the sampled region. Using the center of the sampled region as the kernel pattern.")
-        else:
-            samples_axis = [
-                sig.abs().sum(0).sum(0).sum(-1),
-                sig.abs().sum(0).sum(1).sum(-1)
-            ]
-            shifts = [
-                torch.argmax(torch.stack([
-                    torch.sum(samples_axis[axis][i::af_axis]) 
-                    for i in range(af_axis)
-                ])).item()
-                for axis, af_axis in enumerate(af)
-            ]
-            shift_y, shift_z = shifts
+        # Measure the shift by checking the pattern at the center of k-space
+        # FIXME: we currently dont support InACS with CAIPI, which would fail
+        sig_sampled_pat = sig.abs().sum(0).sum(-1)!=0
+        kernel_pat = idxs_src[..., 0]
+        y_multi = sig_sampled_pat.shape[0] // tbly // 2
+        z_multi = sig_sampled_pat.shape[1] // tblz // 2
+        cnt = 0 
+        for shift_y in range(af[0]):
+            for shift_z in range(af[1]):
+                if torch.all(sig_sampled_pat[y_multi*tbly+shift_y:y_multi*tbly+shift_y+sbly, z_multi*tblz+shift_z+cnt:z_multi*tblz+shift_z+sblz+cnt] == kernel_pat):
+                    break
+            cnt = (cnt+delta)%af[1]
+        if not torch.all(sig_sampled_pat[y_multi*tbly+shift_y:y_multi*tbly+shift_y+sbly, z_multi*tblz+shift_z+cnt:z_multi*tblz+shift_z+sblz+cnt] == kernel_pat):
+            warnings.warn("Could not find the kernel pattern in the sampled region. Using the center of the sampled region as the kernel pattern.")
     else:
         shift_y, shift_z = abs(sig).sum(0).sum(-1).nonzero()[0]
         #sig = torch.nn.functional.pad(sig,  (xpos, (sblx-xpos-tblx),

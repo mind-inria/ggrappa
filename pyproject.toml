@@ -14,10 +14,10 @@ authors = [
 ]
 
 dependencies = [
-  "numpy>=1.26.4",
-  "scipy==1.13.*",
-  "torch>=2.3.0",
-  "tqdm>=4.66.4"
+  "numpy",
+  "scipy",
+  "torch",
+  "tqdm"
 ]
 
 [project.urls]

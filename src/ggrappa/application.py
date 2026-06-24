@@ -62,7 +62,7 @@ def apply_grappa_kernel(sig,
         if not torch.all(sig_sampled_pat[y_multi*tbly+shift_y:y_multi*tbly+shift_y+sbly, z_multi*tblz+shift_z+cnt:z_multi*tblz+shift_z+sblz+cnt] == kernel_pat):
             warnings.warn("Could not find the kernel pattern in the sampled region. Using the center of the sampled region as the kernel pattern.")
     else:
-        shift_y, shift_z = abs(sig).sum(0).sum(-1).nonzero()[0]
+        shift_y, shift_z = abs(sig).sum(0).sum(-1).nonzero()[0].cpu()
         #sig = torch.nn.functional.pad(sig,  (xpos, (sblx-xpos-tblx),
         #                                    (af[1] - zpos)%tblz + zpos, (sblz-zpos-tblz),
         #                                    (af[0] - ypos)%tbly + ypos, (sbly-ypos-tbly)))
